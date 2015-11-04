@@ -8,10 +8,48 @@ class HangpersonGame
   # def initialize()
   # end
   
+  attr_accessor :word, :guesses, :wrong_guesses
+
+  
   def initialize(word)
     @word = word
+    @guesses = ''
+    @wrong_guesses = ''
+  end
+  
+  def guess letter
+    raise ArgumentError if letter.nil? || letter.empty? || letter !~ /\w/
+    lowerCaseLetter = letter.downcase
+    if @word.include? lowerCaseLetter
+      
+      if @guesses.include? lowerCaseLetter
+        return false
+      else
+        @guesses.concat lowerCaseLetter 
+        return true
+      end
+      
+    else 
+      if @wrong_guesses.include? lowerCaseLetter
+        return false
+      else
+        @wrong_guesses.concat lowerCaseLetter 
+        return true
+      end
+    end
+     
+  end
+  
+  def word_with_guesses
+    @word.split('').map { |letter| @guesses.include?(letter) ? letter : '-' }.join
   end
 
+  def check_win_or_lose
+    puts "word: #{word} guesses: #{@guesses}"
+    return :win if @word.downcase.split('').sort == @guesses.downcase.split('').sort 
+    @guesses.size + @wrong_guesses.size == 7 ? :lose : :play
+  end
+  
   def self.get_random_word
     require 'uri'
     require 'net/http'
